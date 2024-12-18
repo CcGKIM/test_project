@@ -1,0 +1,27 @@
+def solution(n, k):
+    # 진법 변환 함수
+    def convert_to_base(num, base):
+        result = ''
+        while num >= base:
+            result = str(num % base) + result
+            num //= base
+        result = str(num) + result
+        return result
+
+    # 소수 판별 함수
+    def is_prime(x):
+        if x < 2:
+            return False
+        for i in range(2, int(x ** 0.5) + 1):
+            if x % i == 0:
+                return False
+        return True
+
+    # 진법 변환
+    converted = convert_to_base(n, k)
+    # 0을 기준으로 분리하여 소수 판별
+    numbers = [int(num) for num in converted.split('0') if num]
+    # 소수의 개수 세기
+    answer = sum(1 for num in numbers if is_prime(num))
+
+    return answer
