@@ -1,0 +1,76 @@
+## 퍼즐 조각 채우기! 넘모 어렵당...
+
+def solution(game_board, table):
+    from collections import deque
+    
+    def bfs(board, target):
+        shapes = []
+        shape = []
+        visited = [[False] * len(board[0]) for _ in range(len(board))]
+        dx = [-1, 1, 0, 0]
+        dy = [0, 0, -1, 1]
+        
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                shape = []
+                
+                if not visited[i][j] and board[i][j] == target:
+                    queue = deque()
+                    queue.append([i, j])
+                    shape.append([i, j])
+                    visited[i][j] = True
+                    
+                    while queue:
+                        x, y = queue.popleft()
+                        
+                        for d in range(4):
+                            nx, ny = x + dx[d], y + dy[d]
+                            if 0 <= nx < len(board) and 0 <= ny < len(board[0]) and not visited[nx][ny] and board[nx][ny] == target:
+                                visited[nx][ny] = True
+                                queue.append([nx, ny])
+                                shape.append([nx, ny])
+                    
+                    shapes.append(shape)
+        
+        return shapes
+    
+    def normalize(shape):
+        min_x = min([x for x, y in shape])
+        min_y = min([y for x, y in shape])
+        
+        shape = sorted([(x - min_x, y - min_y) for x, y in shape])
+        
+        return tuple(shape)
+    
+    def rotate(shape):
+        shape = normalize([(y, -x) for x, y in shape])
+        return tuple(shape)
+    
+    new_shape_1 = [normalize(shape) for shape in bfs(game_board, 0)]
+    
+    new_shape_2 = bfs(table, 1)
+    puzzles = []
+    for shape in new_shape_2:
+        my_set = set()
+        for _ in range(4):
+            shape = rotate(shape)
+            my_set.add(tuple(shape))
+        puzzles.append(my_set)
+        
+    used = [False] * len(puzzles)
+    answer = 0
+    test_1 = []
+    test_2 = []
+    print(puzzles)
+    
+    for shape in new_shape_1:
+        for i, puzzle_set in enumerate(puzzles):
+            if shape in puzzle_set:
+                if not used[i]:
+                    used[i] = True
+                    answer += len(shape)
+                    break
+    
+    # print(test_1)
+    # print(test_2)
+    return answer
