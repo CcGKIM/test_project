@@ -1,0 +1,21 @@
+N, M = 5, 20
+array = [4, 42, 40, 26, 46]
+
+array.sort()
+
+# 이진 탐색 범위 설정
+l, r = 0, array[-1]
+answer = 0
+
+while l <= r:
+    m = (l + r) // 2
+    # 잘린 나무 길이 계산
+    trees = sum(max(0, x - m) for x in array)
+
+    if trees >= M:
+        answer = m  # 조건 만족 시 답 갱신
+        l = m + 1   # 더 큰 값을 탐색
+    else:
+        r = m - 1   # 더 작은 값을 탐색
+
+print(answer)
